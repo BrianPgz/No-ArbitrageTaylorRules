@@ -1,0 +1,39 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parámetros de la Regla de Taylor
+inflacion_actual = 4.5  # Inflación actual en %
+inflacion_objetivo = 3.0  # Inflación objetivo de Banxico en %
+brecha_producto = -1.0  # Brecha del producto en %
+tasa_interes_neutral = 2.5  # Tasa de interés neutral real estimada en %
+
+# Coeficientes de la Regla de Taylor
+alpha = 1.5  # Sensibilidad a la inflación
+beta = 0.5   # Sensibilidad a la brecha del producto
+
+# Calculo de la tasa de interés según la Regla de Taylor
+tasa_taylor = tasa_interes_neutral + inflacion_actual + alpha * (inflacion_actual - inflacion_objetivo) + beta * brecha_producto
+print(f"Tasa de interés calculada por la Regla de Taylor: {tasa_taylor:.2f}%")
+
+
+# Supongamos que tenemos tasas observadas para diferentes plazos
+tenores = [1, 3, 6, 12]  # Plazos en meses
+tasas_observadas = [5.0, 5.2, 5.4, 6.0]  # Tasas a plazo observadas en %
+
+# Función de interpolación lineal para encontrar tasas spot intermedias
+def interpolar_tasa(t, tenores, tasas):
+    return np.interp(t, tenores, tasas)
+
+# Crear un rango de tiempo para ver la curva interpolada
+meses = np.linspace(1, 12, 100)  # De 1 a 12 meses
+tasas_interpoladas = [interpolar_tasa(m, tenores, tasas_observadas) for m in meses]
+
+# Gráfica de la curva de tasas
+plt.plot(meses, tasas_interpoladas, label="Curva de Tasas Spot Interpolada")
+plt.scatter(tenores, tasas_observadas, color='red', label="Tasas Observadas")
+plt.xlabel("Meses")
+plt.ylabel("Tasa (%)")
+plt.title("Curva de Tasas Spot Ajustada (No-Arbitrage)")
+plt.legend()
+plt.grid(True)
+plt.show()
